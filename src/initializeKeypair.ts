@@ -18,7 +18,7 @@ export async function initializeKeypair(
     keypair = web3.Keypair.fromSecretKey(secretKey)
   }
 
-  console.log("PublicKey:", keypair.publicKey.toBase58())
+  console.log("my keypair.publicKey:", keypair.publicKey.toBase58())
   await airdropSolIfNeeded(keypair, connection)
   return keypair
 }

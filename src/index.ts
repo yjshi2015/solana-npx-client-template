@@ -11,8 +11,8 @@ async function createNewMint(
   mintAuthority: web3.PublicKey,
   freezeAuthoritty: web3.PublicKey,
   decimals: number
-  ): Promise<web3.PublicKey> {
-  
+): Promise<web3.PublicKey> {
+
   const tokenMint = await token.createMint(
     connection,
     payer,
@@ -70,13 +70,13 @@ async function mintTokens(
 
 // step 4: 给指定账户授权
 async function approveDelegate(
-  connection:web3.Connection,
+  connection: web3.Connection,
   payer: web3.Keypair,
   account: web3.PublicKey,
   delegate: web3.PublicKey,
   owner: web3.Signer | web3.PublicKey,
   amount: number) {
-  
+
   const transactionSignature = await token.approve(
     connection,
     payer,
@@ -116,15 +116,15 @@ async function removeDelegate(
   payer: web3.Keypair,
   account: web3.PublicKey,
   owner: web3.PublicKey | web3.Signer) {
-  
-    const transactionSignature = await token.revoke(
-      connection,
-      payer,
-      account, //需要移除授权的 token account
-      owner // 该 token account 的 owner 所有者
-    )
 
-    console.log(`Remove Delegate Transaction: https://explorer.solana.com/tx/${transactionSignature}?cluster=devnet`);
+  const transactionSignature = await token.revoke(
+    connection,
+    payer,
+    account, //需要移除授权的 token account
+    owner // 该 token account 的 owner 所有者
+  )
+
+  console.log(`Remove Delegate Transaction: https://explorer.solana.com/tx/${transactionSignature}?cluster=devnet`);
 }
 
 // step 7: 销毁 token account
@@ -135,19 +135,25 @@ async function burnTokens(
   mint: web3.PublicKey,
   owner: web3.Keypair,
   amount: number) {
-  
-    const transactionSignature = await token.burn(
-      connection,
-      payer,
-      account,
-      mint,
-      owner,
-      amount
-    )
 
-    console.log(`Burn Transaction: https://explorer.solana.com/tx/${transactionSignature}?cluster=devnet`);
+  const transactionSignature = await token.burn(
+    connection,
+    payer,
+    account,
+    mint,
+    owner,
+    amount
+  )
+
+  console.log(`Burn Transaction: https://explorer.solana.com/tx/${transactionSignature}?cluster=devnet`);
 }
 
+// async function main() {
+//   console.log(`--------------- Solana Token Swap ---------------`);
+//   const connection = new web3.Connection(web3.clusterApiUrl("devnet"))
+//   const user = await initializeKeypair(connection)
+//   console.log(`user: ${user.publicKey}`)
+// }
 
 async function main() {
   const connection = new web3.Connection(web3.clusterApiUrl("devnet"))
@@ -163,7 +169,13 @@ async function main() {
     2
   )
 
+  // 调用函数开始等待
+  await sleep(10);
+  console.log(`sleep finished.....`)
+
+
   const mintInfo = await token.getMint(connection, mint);
+  console.log(`mintInfo : ${JSON.stringify(mintInfo.address)}`);
 
   // 这是个ata账户
   const tokenAccount = await createTokenAccount(
@@ -229,3 +241,9 @@ async function main() {
     25 * 10 ** mintInfo.decimals
   )
 }
+
+function sleep(seconds: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, seconds * 1000));
+}
+
+main()
